@@ -44,12 +44,12 @@ public class MainActivity extends AppCompatActivity {
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
 
-
         // Create and/or open a database to read from it
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
+        //Projecting means choosing some columns from each record and leaving others out.
         String[] projection = {
                 petContract.PetEntry._ID,
                 petContract.PetEntry.COLUMN_PET_NAME,
@@ -57,7 +57,11 @@ public class MainActivity extends AppCompatActivity {
                 petContract.PetEntry.COLUMN_PET_GENDER,
                 petContract.PetEntry.COLUMN_PET_WEIGHT };
 
+        String selection = petContract.PetEntry.COLUMN_PET_NAME + "=Toto";
         // Perform a query on the pets table
+        //Cursors are what contain the result set of a query made against a database in Android.
+        // The Cursor class has an API that allows an app to read (in a type-safe manner)
+        //cursor is an object that represents bunch of rows in a database
         Cursor cursor = db.query(
                 petContract.PetEntry.TABLE_NAME,   // The table to query
                 projection,            // The columns to return
@@ -71,10 +75,8 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             // Create a header in the Text View that looks like this:
-            //
             // The pets table contains <number of rows in Cursor> pets.
             // _id - name - breed - gender - weight
-            //
             // In the while loop below, iterate through the rows of the cursor and display
             // the information from each column in this order.
             displayView.setText("The pets table contains " + cursor.getCount() + " pets.\n\n");
@@ -101,10 +103,10 @@ public class MainActivity extends AppCompatActivity {
                 int currentGender = cursor.getInt(genderColumnIndex);
                 int currentWeight = cursor.getInt(weightColumnIndex);
                 // Display the values from each column of the current row in the cursor in the TextView
-                displayView.append(("\n" + currentID + " - " +
-                        currentName + " - " +
-                        currentBreed + " - " +
-                        currentGender + " - " +
+                displayView.append(("\n" + currentID + "  |   " +
+                        currentName +   "  |   " +
+                        currentBreed +  "  |   " +
+                        currentGender + "  |   " +
                         currentWeight));
             }
         } finally {
@@ -117,24 +119,13 @@ public class MainActivity extends AppCompatActivity {
         // Gets the database in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        // Create a ContentValues object where column names are the keys,
-        // and Toto's pet attributes are the values.
         ContentValues values = new ContentValues();
         values.put(petContract.PetEntry.COLUMN_PET_NAME, "Toto");
         values.put(petContract.PetEntry.COLUMN_PET_BREED, "Terrier");
         values.put(petContract.PetEntry.COLUMN_PET_GENDER, petContract.PetEntry.GENDER_MALE);
         values.put(petContract.PetEntry.COLUMN_PET_WEIGHT, 7);
-
-        // Insert a new row for Toto in the database, returning the ID of that new row.
-        // The first argument for db.insert() is the pets table name.
-        // The second argument provides the name of a column in which the framework
-        // can insert NULL in the event that the ContentValues is empty (if
-        // this is set to "null", then the framework will not insert a row when
-        // there are no values).
-        // The third argument is the ContentValues object containing the info for Toto.
         long newRowId = db.insert(petContract.PetEntry.TABLE_NAME, null, values);
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu options from the res/menu/menu_catalog.xml file.
@@ -149,7 +140,9 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Insert dummy data" menu option
             case R.id.action_insert_dummy_data:
-                insertPet();
+                Intent intent = new Intent(MainActivity.this, EditorActiviti.class);
+                startActivity(intent);
+//                insertPet();
                 displayDatabaseInfo();
                 return true;
             // Respond to a click on the "Delete all entries" menu option

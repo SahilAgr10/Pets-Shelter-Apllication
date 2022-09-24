@@ -1,7 +1,8 @@
 package com.example.petsshelter.data;
 
 import android.provider.BaseColumns;
-
+// contract class helps us to document the stucture of database (Schema).
+// Your contract basically defines your database and how people should interact with it through the Content Provider.
 public final class petContract {
     // To prevent someone from accidentally instantiating the contract class,
     // give it an empty constructor.
